@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, auth
 from pymongo import MongoClient
 from werkzeug.wrappers import Request, Response
 # client = MongoClient()
@@ -37,7 +37,7 @@ def users():
 
      except ValueError:
          return jsonify({"error": "Bad Token"})
-     except AuthError:
+     except auth.AuthError:
          return jsonify({"error:" "Token was revoked"})
 #
 # @app.route("/artists", methods = ["GET"])
