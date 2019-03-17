@@ -39,25 +39,26 @@ def users():
          return jsonify({"error": "Bad Token"})
      except auth.AuthError:
          return jsonify({"error:" "Token was revoked"})
-#
-# @app.route("/artists", methods = ["GET"])
-# @auth_required
-# def getInfoForLogin():
-#     return jsonify()
-#
-#
-# class LoginError(werkzeug.exceptions.HTTPException):
-#      code = 401
-#      def __init__(self, message):
-#          self.message = message
-#
-# app.register_error_handler(LoginError, handle_401)
-#
-# def auth_required(f):
-#    @wraps(f)
-#     def verify_token(*args, **kwargs):
-#         try:
-#             id_token = request.get_json()["id_token"]
-#             decoded_token = auth.verify_id_token(id_token)
-#         except:
-#             response
+
+ @app.route("/artists", methods = ["GET"])
+ @auth_required
+ def getInfoForLogin():
+     
+
+
+ #class LoginError(werkzeug.exceptions.HTTPException):
+#     code = 401
+#     def __init__(self, message):
+#         self.message = message
+
+
+ def auth_required(f):
+    @wraps(f)
+     def verify_token(*args, **kwargs):
+         try:
+            id_token = request.get_json()["id_token"]
+            decoded_token = auth.verify_id_token(id_token)
+         except:
+             return jsonify({"error": "Bad token or token was revoked"})
+        reutrn f(*args, **kwargs)
+    return verify_token
