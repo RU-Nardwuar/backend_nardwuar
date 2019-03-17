@@ -3,13 +3,13 @@ import firebase_admin
 from firebase_admin import credentials, auth
 from pymongo import MongoClient
 from werkzeug.wrappers import Request, Response
-# client = MongoClient()
+#client = MongoClient()
 cred = credentials.Certificate('nardwuar-958fc-firebase-adminsdk-4euwu-f815d4afc9.json')
 default_app = firebase_admin.initialize_app(cred)
 app=Flask(__name__)
 
 #database for users
-# users_db = client['users-db']
+#users_db = client['users-db']
 
 #route for user registration
 @app.route("/register", methods = ["POST"])
@@ -40,25 +40,27 @@ def users():
      except auth.AuthError:
          return jsonify({"error:" "Token was revoked"})
 
- @app.route("/artists", methods = ["GET"])
- @auth_required
- def getInfoForLogin():
-     
-
-
- #class LoginError(werkzeug.exceptions.HTTPException):
-#     code = 401
-#     def __init__(self, message):
-#         self.message = message
-
-
- def auth_required(f):
-    @wraps(f)
-     def verify_token(*args, **kwargs):
-         try:
-            id_token = request.get_json()["id_token"]
-            decoded_token = auth.verify_id_token(id_token)
-         except:
-             return jsonify({"error": "Bad token or token was revoked"})
-        reutrn f(*args, **kwargs)
-    return verify_token
+#  @app.route("/artists", methods = ["GET"])
+#  @auth_required
+#  def getInfoForLogin():
+#
+#
+#
+#
+#
+#  #class LoginError(werkzeug.exceptions.HTTPException):
+# #     code = 401
+# #     def __init__(self, message):
+# #         self.message = message
+#
+#
+#  def auth_required(f):
+#     @wraps(f)
+#      def verify_token(*args, **kwargs):
+#          try:
+#             id_token = request.get_json()["id_token"]
+#             decoded_token = auth.verify_id_token(id_token)
+#          except:
+#              return jsonify({"error": "Bad token or token was revoked"})
+#         reutrn f(*args, **kwargs)
+#     return verify_token
