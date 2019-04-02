@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 import firebase_admin
 from firebase_admin import credentials, auth
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 from werkzeug.wrappers import Request, Response
 from functools import wraps
 
@@ -11,13 +11,13 @@ import pitchfork_api
 spotify = spotipy.Spotify()
 
 client = MongoClient('mongodb+srv://admin:greenpizza@cluster0-fhxen.mongodb.net/test?retryWrites=true')
-cred = credentials.Certificate('nardwuar-958fc-firebase-adminsdk-4euwu-f815d4afc9.json')
+cred = credentials.Certificate('nardwuar-7e6fc-firebase-adminsdk-lzorg-8d67ef20d9.json')
 default_app = firebase_admin.initialize_app(cred)
 
 app=Flask(__name__)
 
 #database for users
-users_db = client['users-db']
+nardwuar_db = client['nardwuar-db']
 
 def auth_required(f):
     @wraps(f)
@@ -42,31 +42,38 @@ def users():
          decoded_token = auth.verify_id_token(id_token)
          uid = decoded_token['uid']
          newUser = {
-         "id": uid,
-         "Name": request.get_json()["Name"],
-         "Username": request.get_json()["Username"],
+         "_id": uid,
+         "Name": request.get_json()["name"],
+         "Username": request.get_json()["username"],
          "FollowedArtists": []
          }
-         users_db.insert_one(newUser)
+         users_coll = nardwuar_db['users']
+         users_coll.insert_one(newUser)
          response ={
          "status":"Success",
          "message":"Account created!"
          }
-         return jsonify(response);
+         return jsonify(response)
 
-     except ValueError:
+     except errors.DuplicateKeyError:
+         return jsonify({"error": "Account already exists"})
+
+     except ValueError as e:
          return jsonify({"error": "Bad Token"})
+
      except auth.AuthError:
          return jsonify({"error:" "Token was revoked"})
 
 
-@app.route("/artists", methods = ["GET"])
-@auth_required
-def getInfoForLogin():
-    user = users_db.find_one({"id": decoded_token['uid']})
-    return jsonify(user["FollowedArtists"])
+#@app.route("/artists", methods = ["GET"])
+#@auth_required
+#def getInfoForLogin():
+#    user = users_db.find_one({"id": decoded_token['uid']})
+#    return jsonify(user["FollowedArtists"])
 
 
+#route for sending search results
+#route to add to the following list
 @app.route("/basicArtistInfo", methods = ["GET"])
 def searchArtistInfo(artistName):
     results = spotify.search(artistName,1,0, "artist")
