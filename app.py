@@ -31,7 +31,7 @@ def auth_required(f):
     return verify_token
 
 #route for user registration
-@app.route("/register", methods = ["POST"])
+@app.route("/users", methods = ["POST"])
 def users():
      #need id_token from frontend
      id_token = request.get_json()["id_token"]
@@ -72,30 +72,46 @@ def users():
 #    return jsonify(user["FollowedArtists"])
 
 
+#@app.route("/artistID", methods = ["GET"])
+
+
 #route for sending search results
 #route to add to the following list
-@app.route("/basicArtistInfo", methods = ["GET"])
-def searchArtistInfo(artistName):
-    results = spotify.search(artistName,1,0, "artist")
+@app.route("/artistInfo", methods = ["GET"])
+def searchArtistInfo():
+    artist_name = request.get_json()["artist_name"]
+    results = spotify.search(artist_name,1,0, "artist")
     artist = results['artists']['items'][0]
-    artistID = artist['id']
-    album = spotify.artist_albums(artistID)
-    album = album['items']
-    artistInfo = {
-    "Artist Name": artist['name'],
-    "Albums": album,
-    "Genres": artist['genres'],
-    "Total Number of Spotify Followers": artist['followers']['total']
-    }
-    return jsonify(artistInfo)
 
-@app.route("/artistRating", methods = ["GET"])
-def getArtistRating(artistName, albumName):
-    p = pitchfork.search(artistName, albumName)
-    artistInfo ={
-    "Album description": p.abstract(),
-    "Album year": p.year(),
-    "Label": p.label(),
-    "Album score": p.score()
+    artistInfo = {
+        "Spotify":{
+            "Artist Name": artist['name'],
+            "Albums": album,
+            "Genres": artist['genres'],
+            "Total Number of Spotify Followers": artist['followers']['total']
+        },
+        "Pitchfork":{
+        }
     }
+    artistID = artist['id']
+    album_catalog= spotify.artist_albums(artistID)
+    list_of_albums = album_catalog['items']
+    for x in range(2):
+        try:
+            album = list_of_albums[x]
+            album_name =album['name']
+            p=pitchfork.search(artist_name, album_name)
+            album_info = {
+                "Album description": p.abstract(),
+                "Album year": p.year(),
+                "Label": p.label(),
+                "Album score": p.score()
+            }
+            artistInfo['Pitchfork'].update({album_name : album_info})
+
+        except IndexError:
+            break
+
+
+
     return jsonify(artistInfo)
