@@ -6,7 +6,7 @@ from werkzeug.wrappers import Request, Response
 from functools import wraps
 
 import spotipy
-import pitchfork
+import pitchfork_api
 
 spotify = spotipy.Spotify()
 
@@ -67,6 +67,7 @@ def users():
 
      except auth.AuthError:
          return jsonify({"error": "Token was revoked"})
+
 
 @app.route("/ratings", methods = ["GET"])
 def pitchforkRatings():
