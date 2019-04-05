@@ -6,7 +6,7 @@ from werkzeug.wrappers import Request, Response
 from functools import wraps
 
 import spotipy
-import pitchfork_api
+import pitchfork
 
 spotify = spotipy.Spotify()
 
