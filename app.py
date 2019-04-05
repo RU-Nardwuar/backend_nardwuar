@@ -73,7 +73,7 @@ def users():
 def pitchforkRatings():
     artist_name = request.get_json()["artist_name"]
     album_name = request.get_json()["album_name"]
-    p=pitchfork.search(artist_name, album_name)
+    p=pitchfork_api.search(artist_name, album_name)
     album_info = {
         "Album description": p.abstract(),
         "Album year": p.year(),
