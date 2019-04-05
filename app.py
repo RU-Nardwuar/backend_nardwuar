@@ -10,6 +10,10 @@ import pitchfork_api
 
 spotify = spotipy.Spotify()
 
+SPOTIPY_CLIENT_ID = 'e46b04d01bd14ddc881de79291aa9c18'
+SPOTIPY_CLIENT_SECRET = 'b8bd7750a5b64a64a8cf4b53c6b4076a'
+
+
 client = MongoClient('mongodb+srv://admin:greenpizza@cluster0-fhxen.mongodb.net/test?retryWrites=true')
 cred = credentials.Certificate('nardwuar-7e6fc-firebase-adminsdk-lzorg-8d67ef20d9.json')
 default_app = firebase_admin.initialize_app(cred)
@@ -62,24 +66,27 @@ def users():
          return jsonify({"error": "Bad Token"})
 
      except auth.AuthError:
-         return jsonify({"error:" "Token was revoked"})
+         return jsonify({"error": "Token was revoked"})
+
+@app.route("/ratings", methods = ["GET"])
+def pitchforkRatings():
+    artist_name = request.get_json()["artist_name"]
+    album_name = request.get_json()["album_name"]
+    p=pitchfork.search(artist_name, album_name)
+    album_info = {
+        "Album description": p.abstract(),
+        "Album year": p.year(),
+        "Label": p.label(),
+        "Album score": p.score()
+    }
+    return jsonify(album_info)
 
 
-#@app.route("/artists", methods = ["GET"])
-#@auth_required
-#def getInfoForLogin():
-#    user = users_db.find_one({"id": decoded_token['uid']})
-#    return jsonify(user["FollowedArtists"])
-
-
-#@app.route("/artistID", methods = ["GET"])
-
-
-#route for sending search results
-#route to add to the following list
 @app.route("/artistInfo", methods = ["GET"])
 def searchArtistInfo():
+
     artist_name = request.get_json()["artist_name"]
+    return jsonify({"test": "success"})
     results = spotify.search(artist_name,1,0, "artist")
     artist = results['artists']['items'][0]
 
@@ -111,7 +118,4 @@ def searchArtistInfo():
 
         except IndexError:
             break
-
-
-
     return jsonify(artistInfo)
