@@ -89,7 +89,7 @@ def searchArtistInfo():
     artistInfo = {
         "Spotify":{
             "Artist Name": artist['name'],
-            "Albums": list_of_albums_names,
+            "Albums": list(set(list_of_albums_names)),
             "Genres": artist['genres'],
             "Total Number of Spotify Followers": artist['followers']['total']
         },
