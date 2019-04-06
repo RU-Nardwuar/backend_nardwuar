@@ -17,9 +17,6 @@ client_credentials_manager = SpotifyClientCredentials(SPOTIPY_CLIENT_ID, SPOTIPY
 spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 
-#SPOTIPY_REDIRECT_URI =
-
-
 client = MongoClient('mongodb+srv://admin:greenpizza@cluster0-fhxen.mongodb.net/test?retryWrites=true')
 cred = credentials.Certificate('nardwuar-7e6fc-firebase-adminsdk-lzorg-8d67ef20d9.json')
 default_app = firebase_admin.initialize_app(cred)
@@ -76,12 +73,11 @@ def users():
 
 @app.route("/artistInfo", methods = ["GET"])
 def searchArtistInfo():
-    artist_name = request.get_json()["artist_name"]
-    results = spotify.search(artist_name,1,0, "artist")
-    artist = results['artists']['items'][0]
-    artistID = artist['id']
+    artist_id = request.get_json()["artist_id"]
+    artist = spotify.artist(artist_id)
 
-    albumResults = spotify.artist_albums(artistID)
+
+    albumResults = spotify.artist_albums(artist_id)
     list_of_albums = albumResults['items']
     list_of_albums_names = []
     for item in list_of_albums:
