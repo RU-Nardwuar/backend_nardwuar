@@ -91,7 +91,8 @@ def searchArtistInfo():
     seen_add=seen.add
     list_of_albums_names_no_duplicates = [x for x in list_of_albums_names if not (x in seen or seen_add(x))]
 
-    pitchforkOrderedDict = OrderedDict();
+    artistInfo = OrderedDict()
+    pitchforkOrderedDict = OrderedDict()
     pitchforkOrderedDict={}
 
     artistInfo = {
