@@ -86,11 +86,15 @@ def searchArtistInfo():
     for item in list_of_albums:
         list_of_albums_names.append(item['name'])
 
+    seen = set()
+    seen_add=seen.add
+    list_of_albums_names_no_duplicates = [x for x in list_of_albums_names_no_duplicates if not (x in seen or seen_add(x))]
+
     artistInfo = {
         "Spotify":{
             "Artist Name": artist['name'],
             "Artist Photo 600x600": artist['images'][0]['url'],
-            "Albums": list(set(list_of_albums_names)),
+            "Albums": list_of_albums_names_no_duplicates,
             "Genres": artist['genres'],
             "Total Number of Spotify Followers": artist['followers']['total']
         },
@@ -105,7 +109,6 @@ def searchArtistInfo():
             album_info = {
                 "Album description": p.abstract(),
                 "Album year": p.year(),
-                "Album photo": p.cover(),
                 "Label": p.label(),
                 "Album score": p.score()
             }
