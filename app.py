@@ -83,8 +83,8 @@ def searchArtistInfo():
     albumResults = spotify.artist_albums(artistID)
     list_of_albums = albumResults['items']
     list_of_albums_names = []
-    for x in list_of_albums:
-        list_of_albums_names.append(list_of_albums[x])
+    for item in list_of_albums:
+        list_of_albums_names.append(item['name'])
 
     artistInfo = {
         "Spotify":{
