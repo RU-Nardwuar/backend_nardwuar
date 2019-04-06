@@ -90,6 +90,7 @@ def searchArtistInfo():
     seen_add=seen.add
     list_of_albums_names_no_duplicates = [x for x in list_of_albums_names if not (x in seen or seen_add(x))]
 
+    artistInfo = OrderedDict()
     artistInfo = {
         "Spotify":{
             "Artist Name": artist['name'],
@@ -110,10 +111,8 @@ def searchArtistInfo():
                 "Album description": p.abstract(),
                 "Album year": p.year(),
                 "Label": p.label(),
-                "Album photo": list_of_albums[]
                 "Album score": p.score()
             }
-            artistInfo['Pitchfork'] = OrderedDict()
             artistInfo['Pitchfork'].update({album_name : album_info})
 
         except IndexError:
