@@ -110,8 +110,10 @@ def searchArtistInfo():
                 "Album description": p.abstract(),
                 "Album year": p.year(),
                 "Label": p.label(),
+                "Album photo": list_of_albums[]
                 "Album score": p.score()
             }
+            artistInfo['Pitchfork'] = OrderedDict()
             artistInfo['Pitchfork'].update({album_name : album_info})
 
         except IndexError:
