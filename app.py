@@ -89,6 +89,7 @@ def searchArtistInfo():
     artistInfo = {
         "Spotify":{
             "Artist Name": artist['name'],
+            "Artist Photo 600x600": artist['images'][0]['url'],
             "Albums": list(set(list_of_albums_names)),
             "Genres": artist['genres'],
             "Total Number of Spotify Followers": artist['followers']['total']
@@ -104,6 +105,7 @@ def searchArtistInfo():
             album_info = {
                 "Album description": p.abstract(),
                 "Album year": p.year(),
+                "Album photo": p.cover(),
                 "Label": p.label(),
                 "Album score": p.score()
             }
