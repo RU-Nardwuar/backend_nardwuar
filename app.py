@@ -9,11 +9,13 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import pitchfork_api
 
-client_credentials_manager = SpotifyClientCredentials()
-spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-
 SPOTIPY_CLIENT_ID = 'e46b04d01bd14ddc881de79291aa9c18'
 SPOTIPY_CLIENT_SECRET = 'b8bd7750a5b64a64a8cf4b53c6b4076a'
+
+client_credentials_manager = SpotifyClientCredentials(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET)
+spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+
 #SPOTIPY_REDIRECT_URI =
 
 
