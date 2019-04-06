@@ -76,7 +76,6 @@ def searchArtistInfo():
     artist_id = request.get_json()["artist_id"]
     artist = spotify.artist(artist_id)
 
-
     albumResults = spotify.artist_albums(artist_id)
     list_of_albums = albumResults['items']
     list_of_albums_names = []
@@ -104,7 +103,7 @@ def searchArtistInfo():
     for x in range(0,3):
         try:
             album_name = list_of_albums_names_no_duplicates[x]
-            p=pitchfork.search(artist_name, album_name)
+            p=pitchfork.search(artist['name'], album_name)
             album_info = {
                 "Album description": p.abstract(),
                 "Album year": p.year(),
