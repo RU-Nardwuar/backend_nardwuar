@@ -91,7 +91,9 @@ def searchArtistInfo():
     seen_add=seen.add
     list_of_albums_names_no_duplicates = [x for x in list_of_albums_names if not (x in seen or seen_add(x))]
 
-    artistInfo = OrderedDict()
+    pitchforkOrderedDict = OrderedDict();
+    pitchforkOrderedDict={}
+
     artistInfo = {
         "Spotify":{
             "Artist Name": artist['name'],
@@ -100,8 +102,7 @@ def searchArtistInfo():
             "Genres": artist['genres'],
             "Total Number of Spotify Followers": artist['followers']['total']
         },
-        "Pitchfork":{
-        }
+        "Pitchfork": pitchforkOrderedDict
     }
 
     for x in range(0,3):
@@ -114,7 +115,7 @@ def searchArtistInfo():
                 "Label": p.label(),
                 "Album score": p.score()
             }
-            artistInfo['Pitchfork'].update({album_name : album_info})
+            pitchforkOrderedDict.update({album_name : album_info})
 
         except IndexError:
             break
