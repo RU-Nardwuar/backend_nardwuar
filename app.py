@@ -116,7 +116,6 @@ def searchArtistInfo():
                 "Album score": p.score()
             }
             pitchforkOrderedDict.update({album_name : album_info})
-            pitchforkOrderedDict.move_to_end(album_name)
 
         except IndexError:
             break
