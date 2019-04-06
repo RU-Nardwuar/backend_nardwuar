@@ -68,26 +68,9 @@ def users():
      except auth.AuthError:
          return jsonify({"error": "Token was revoked"})
 
-
-@app.route("/ratings", methods = ["GET"])
-def pitchforkRatings():
-    artist_name = request.get_json()["artist_name"]
-    album_name = request.get_json()["album_name"]
-    p=pitchfork_api.search(artist_name, album_name)
-    album_info = {
-        "Album description": p.abstract(),
-        "Album year": p.year(),
-        "Label": p.label(),
-        "Album score": p.score()
-    }
-    return jsonify(album_info)
-
-
 @app.route("/artistInfo", methods = ["GET"])
 def searchArtistInfo():
-
     artist_name = request.get_json()["artist_name"]
-    return jsonify({"test": "success"})
     results = spotify.search(artist_name,1,0, "artist")
     artist = results['artists']['items'][0]
 
