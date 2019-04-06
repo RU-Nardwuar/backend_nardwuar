@@ -8,7 +8,7 @@ from collections import OrderedDict
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-import pitchfork_api
+import pitchfork
 
 SPOTIPY_CLIENT_ID = 'e46b04d01bd14ddc881de79291aa9c18'
 SPOTIPY_CLIENT_SECRET = 'b8bd7750a5b64a64a8cf4b53c6b4076a'
@@ -108,7 +108,7 @@ def searchArtistInfo():
     for x in range(0,3):
         try:
             album_name = list_of_albums_names_no_duplicates[x]
-            p=pitchfork_api.search(artist_name, album_name)
+            p=pitchfork.search(artist_name, album_name)
             album_info = {
                 "Album description": p.abstract(),
                 "Album year": p.year(),
