@@ -106,7 +106,7 @@ def searchArtistInfo():
 
     for x in range(0,3):
         try:
-            album_name = list_of_albums_names[x]
+            album_name = list_of_albums_names_no_duplicates[x]
             p=pitchfork_api.search(artist_name, album_name)
             album_info = {
                 "Album description": p.abstract(),
