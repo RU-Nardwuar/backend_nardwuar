@@ -71,17 +71,17 @@ def users():
      except auth.AuthError:
          return jsonify({"error": "Token was revoked"})
 
-@app.route("/searchResults", method = ["GET"])
+@app.route("/searchResults", methods = ["GET"])
 def searchResults():
     query = request.get_json()["query"]
-    search_results = spotify.search(query)
+    search_results = spotify.search(query,5,0,"artist")
     search_results = search_results['artists']['items']
 
     five_results= []
-    for x in range(0,5):
-        five_results.append(search_results[x]['name'])
+    for artist in search_results:
+        five_results.append(artist['name'])
 
-    return jsonify(five_results)
+    return five_results
 
 
 
