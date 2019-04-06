@@ -6,12 +6,15 @@ from werkzeug.wrappers import Request, Response
 from functools import wraps
 
 import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 import pitchfork_api
 
-spotify = spotipy.Spotify()
+client_credentials_manager = SpotifyClientCredentials()
+spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 SPOTIPY_CLIENT_ID = 'e46b04d01bd14ddc881de79291aa9c18'
 SPOTIPY_CLIENT_SECRET = 'b8bd7750a5b64a64a8cf4b53c6b4076a'
+#SPOTIPY_REDIRECT_URI =
 
 
 client = MongoClient('mongodb+srv://admin:greenpizza@cluster0-fhxen.mongodb.net/test?retryWrites=true')
