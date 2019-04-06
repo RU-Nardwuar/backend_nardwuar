@@ -113,7 +113,7 @@ def searchArtistInfo():
                 "Album description": p.abstract(),
                 "Album year": p.year(),
                 "Label": p.label(),
-                "Album Cover":p.cover(),
+                "Best New Music":p.best_new_music(),
                 "Album score": p.score()
             }
             pitchforkOrderedDict.update({album_name : album_info})
