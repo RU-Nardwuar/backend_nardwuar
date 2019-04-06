@@ -81,10 +81,7 @@ def searchResults():
     for artist in search_results:
         five_results.append(artist['name'])
 
-    return five_results
-
-
-
+    return jsonify(five_results)
 
 @app.route("/artistInfo", methods = ["GET"])
 def searchArtistInfo():
