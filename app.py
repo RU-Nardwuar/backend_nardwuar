@@ -97,7 +97,7 @@ def searchArtistInfo():
         }
     }
 
-    for x in range(2):
+    for x in range(3):
         try:
             album_name = list_of_albums_names[x]
             p=pitchfork_api.search(artist_name, album_name)
