@@ -100,7 +100,7 @@ def searchArtistInfo():
     for x in range(2):
         try:
             album_name = list_of_albums_names[x]
-            p=pitchfork.search(artist_name, album_name)
+            p=pitchfork_api.search(artist_name, album_name)
             album_info = {
                 "Album description": p.abstract(),
                 "Album year": p.year(),
