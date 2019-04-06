@@ -78,24 +78,28 @@ def searchArtistInfo():
     artist_name = request.get_json()["artist_name"]
     results = spotify.search(artist_name,1,0, "artist")
     artist = results['artists']['items'][0]
+    artistID = artist['id']
+
+    albumResults = spotify.artist_albums(artistID)
+    list_of_albums = albumResults['items']
+    list_of_albums_names = []
+    for x in list_of_albums:
+        list_of_albums_names.append(list_of_albums[x])
 
     artistInfo = {
         "Spotify":{
             "Artist Name": artist['name'],
-            "Albums": album,
+            "Albums": list_of_albums_names,
             "Genres": artist['genres'],
             "Total Number of Spotify Followers": artist['followers']['total']
         },
         "Pitchfork":{
         }
     }
-    artistID = artist['id']
-    album_catalog= spotify.artist_albums(artistID)
-    list_of_albums = album_catalog['items']
+
     for x in range(2):
         try:
-            album = list_of_albums[x]
-            album_name =album['name']
+            album_name = list_of_albums_names[x]
             p=pitchfork.search(artist_name, album_name)
             album_info = {
                 "Album description": p.abstract(),
