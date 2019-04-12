@@ -32,9 +32,10 @@ def auth_required(f):
         try:
             id_token = request.get_json()["id_token"]
             decoded_token = auth.verify_id_token(id_token)
+            uid = decoded_token['uid']
+            return f(uid, *args, **kwargs)
         except:
             return jsonify({"error": "Bad token or token was revoked"})
-        return f(*args, **kwargs)
     return verify_token
 
 #route for user registration
@@ -71,7 +72,7 @@ def users():
      except auth.AuthError:
          return jsonify({"error": "Token was revoked"})
 
-@app.route("/searchResults", methods = ["GET"])
+@app.route("/search", methods = ["GET"])
 def searchResults():
     query = request.get_json()["query"]
     search_results = spotify.search(query,5,0,"artist")
@@ -84,7 +85,9 @@ def searchResults():
     return jsonify(five_results)
 
 @app.route("/artistInfo", methods = ["GET"])
-def searchArtistInfo():
+@auth_required
+def searchArtistInfo(uid):
+    print(uid)
     artist_id = request.get_json()["artist_id"]
     artist = spotify.artist(artist_id)
 
@@ -97,10 +100,9 @@ def searchArtistInfo():
     seen = set()
     seen_add=seen.add
     list_of_albums_names_no_duplicates = [x for x in list_of_albums_names if not (x in seen or seen_add(x))]
-
+    #removes duplicates and maintains order
     artistInfo = OrderedDict({})
-    pitchforkOrderedDict = OrderedDict({})
-
+    albumList=[]
     artistInfo = {
         "Spotify":{
             "Artist Name": artist['name'],
@@ -109,7 +111,7 @@ def searchArtistInfo():
             "Genres": artist['genres'],
             "Total Number of Spotify Followers": artist['followers']['total']
         },
-        "Pitchfork": pitchforkOrderedDict
+        "Pitchfork": albumList
     }
 
     for x in range(0,3):
@@ -117,15 +119,14 @@ def searchArtistInfo():
             album_name = list_of_albums_names_no_duplicates[x]
             p=pitchfork.search(artist['name'], album_name)
             album_info = {
+                "Album name": album_name,
                 "Album description": p.abstract(),
                 "Album year": p.year(),
                 "Label": p.label(),
                 "Best New Music":p.best_new_music(),
                 "Album score": p.score()
             }
-            pitchforkOrderedDict.update({album_name : album_info})
-            pitchforkOrderedDict.move_to_end(album_name)
-
+            albumList.append(album_info)
         except IndexError:
             break
     return jsonify(artistInfo)
