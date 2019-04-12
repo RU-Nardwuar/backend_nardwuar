@@ -85,9 +85,8 @@ def searchResults():
     return jsonify(five_results)
 
 @app.route("/artistInfo", methods = ["GET"])
-@auth_required
-def searchArtistInfo(uid):
-    print(uid)
+def searchArtistInfo():
+
     artist_id = request.get_json()["artist_id"]
     artist = spotify.artist(artist_id)
 
