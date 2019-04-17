@@ -33,44 +33,52 @@ def auth_required(f):
             id_token = request.get_json()["id_token"]
             decoded_token = auth.verify_id_token(id_token)
             uid = decoded_token['uid']
-            return f(uid, *args, **kwargs)
+            return f(user_id = uid, *args, **kwargs)
         except:
             return jsonify({"error": "Bad token or token was revoked"})
     return verify_token
 
-#route for user registration
-@app.route("/users", methods = ["POST"])
-def users():
-     #need id_token from frontend
-     id_token = request.get_json()["id_token"]
-     #verify_id_token() verifies signature and data for provided JWT. Returns a dictionary of key-value pairs parsed from the decoded JWTself.
-     #raises ValueError if jwt was found t be invalid,
-     #raises AuthError if check_revoked is requested and token was revoked
-     try:
-         decoded_token = auth.verify_id_token(id_token)
-         uid = decoded_token['uid']
-         newUser = {
-         "_id": uid,
-         "Name": request.get_json()["name"],
-         "Username": request.get_json()["username"],
-         "FollowedArtists": []
-         }
-         users_coll = nardwuar_db['users']
-         users_coll.insert_one(newUser)
-         response ={
-         "status":"Success",
-         "message":"Account created!"
-         }
-         return jsonify(response)
 
-     except errors.DuplicateKeyError:
-         return jsonify({"error": "Account already exists"})
 
-     except ValueError as e:
-         return jsonify({"error": "Bad Token"})
 
-     except auth.AuthError:
-         return jsonify({"error": "Token was revoked"})
+
+#route for creating new user and getting existing user info
+@app.route("/users", methods = ["POST", "GET"])
+@auth_required
+def users(**kwargs):
+    if request.method == "GET":
+        return jsonify(db.users_coll.find({ _id: kwargs['user_id']}))
+    else:
+        #need id_token from frontend
+        id_token = request.get_json()["id_token"]
+        #verify_id_token() verifies signature and data for provided JWT. Returns a dictionary of key-value pairs parsed from the decoded JWTself.
+        #raises ValueError if jwt was found t be invalid,
+        #raises AuthError if check_revoked is requested and token was revoked
+        try:
+            decoded_token = auth.verify_id_token(id_token)
+            uid = decoded_token['uid']
+            newUser = {
+            "_id": uid,
+            "Name": request.get_json()["name"],
+            "Username": request.get_json()["username"],
+            "FollowedArtists": []
+            }
+            users_coll = nardwuar_db['users']
+            users_coll.insert_one(newUser)
+            response ={
+            "status":"Success",
+            "message":"Account created!"
+            }
+            return jsonify(response)
+
+        except errors.DuplicateKeyError:
+            return jsonify({"error": "Account already exists"})
+
+        except ValueError as e:
+            return jsonify({"error": "Bad Token"})
+
+        except auth.AuthError:
+            return jsonify({"error": "Token was revoked"})
 
 @app.route("/search", methods = ["GET"])
 def searchResults():
