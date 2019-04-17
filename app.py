@@ -39,9 +39,6 @@ def auth_required(f):
     return verify_token
 
 
-
-
-
 #route for creating new user and getting existing user info
 @app.route("/users", methods = ["POST", "GET"])
 @auth_required
@@ -80,6 +77,7 @@ def users(**kwargs):
         except auth.AuthError:
             return jsonify({"error": "Token was revoked"})
 
+#route for getting top 5 results given query (name of artist)
 @app.route("/search", methods = ["GET"])
 def searchResults():
     query = request.args.get('query')
@@ -92,11 +90,10 @@ def searchResults():
 
     return jsonify(five_results)
 
-@app.route("/artistInfo", methods = ["GET"])
-def searchArtistInfo():
-    artist_id = request.args.get('query')
+#route for getting artist info given query (id of artist)
+@app.route("/artist-info", methods = ["GET"])
+def searchArtistInfo(artist_id):
     artist = spotify.artist(artist_id)
-
     albumResults = spotify.artist_albums(artist_id)
     list_of_albums = albumResults['items']
     list_of_albums_names = []
