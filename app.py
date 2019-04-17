@@ -74,20 +74,19 @@ def users():
 
 @app.route("/search", methods = ["GET"])
 def searchResults():
-    query = request.get_json()["query"]
+    query = request.args.get('query')
     search_results = spotify.search(query,5,0,"artist")
     search_results = search_results['artists']['items']
 
-    five_results= []
+    five_results= {}
     for artist in search_results:
-        five_results.append(artist['name'])
+        five_results.update({artist['name'] : artist['id']})
 
     return jsonify(five_results)
 
 @app.route("/artistInfo", methods = ["GET"])
 def searchArtistInfo():
-
-    artist_id = request.get_json()["artist_id"]
+    artist_id = request.args.get('query')
     artist = spotify.artist(artist_id)
 
     albumResults = spotify.artist_albums(artist_id)
