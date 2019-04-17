@@ -84,9 +84,9 @@ def searchResults():
     search_results = spotify.search(query,5,0,"artist")
     search_results = search_results['artists']['items']
 
-    five_results= {}
+    five_results= []
     for artist in search_results:
-        five_results.update({artist['name'] : artist['id']})
+        five_results.append({"Name" : artist['name'], "id" : artist['id']})
 
     return jsonify(five_results)
 
