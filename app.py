@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 import firebase_admin
 from firebase_admin import credentials, auth
+from firebase_admin.auth import AuthError
 from pymongo import MongoClient, errors
 from werkzeug.wrappers import Request, Response
 from functools import wraps
@@ -30,21 +31,46 @@ def auth_required(f):
     @wraps(f)
     def verify_token(*args, **kwargs):
         try:
-            id_token = request.get_json()["id_token"]
+            id_token = request.args.get('id_token')
+            print('=============')
+            print(id_token)
             decoded_token = auth.verify_id_token(id_token)
             uid = decoded_token['uid']
             return f(user_id = uid, *args, **kwargs)
-        except:
+        except AuthError as autherror:
+            print(autherror)
             return jsonify({"error": "Bad token or token was revoked"})
     return verify_token
 
+
+@app.route("/follow", methods = ["POST"])
+@auth_required
+def follow(**kwargs):
+    artist_id = request.get_json()["artist_id"]
+    artist_name = request.get_json()["artist_name"]
+    artist_dict = {
+    "artist_id": artist_id,
+    "artist_name": artist_name
+    }
+
+    users_coll = nardwuar_db['users']
+    users_coll.update({"_id" : kwargs['user_id']}, { '$push': {"FollowedArtists":artist_dict}})
+
+@app.route("/unfollow", methods = ["POST"])
+@auth_required
+def unfollow(**kwargs):
+    artist_id = request.get_json()["artist_id"]
+    artist_name = request.get_json()["artist_name"]
+    users_coll = nardwuar_db['users']
+    users_coll.update({"_id" : kwargs['user_id']}, { '$pull' :{"FollowedArtists":{"artist_id": artist_id}}})
 
 #route for creating new user and getting existing user info
 @app.route("/users", methods = ["POST", "GET"])
 @auth_required
 def users(**kwargs):
     if request.method == "GET":
-        return jsonify(db.users_coll.find({ _id: kwargs['user_id']}))
+        users_coll = nardwuar_db['users']
+        return jsonify(list(users_coll.find({ '_id': kwargs['user_id']})))
     else:
         #need id_token from frontend
         id_token = request.get_json()["id_token"]
@@ -91,7 +117,7 @@ def searchResults():
     return jsonify(five_results)
 
 #route for getting artist info given query (id of artist)
-@app.route("/artist-info", methods = ["GET"])
+@app.route("/artist-info/<artist_id>", methods = ["GET"])
 def searchArtistInfo(artist_id):
     artist = spotify.artist(artist_id)
     albumResults = spotify.artist_albums(artist_id)
@@ -121,9 +147,11 @@ def searchArtistInfo(artist_id):
         try:
             album_name = list_of_albums_names_no_duplicates[x]
             p=pitchfork.search(artist['name'], album_name)
+            description = p.abstract()
+            description = description[:-2]
             album_info = {
                 "Album name": album_name,
-                "Album description": p.abstract(),
+                "Album description": description,
                 "Album year": p.year(),
                 "Label": p.label(),
                 "Best New Music":p.best_new_music(),
