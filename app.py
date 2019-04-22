@@ -52,11 +52,10 @@ def follow(**kwargs):
     "artist_id": artist_id,
     "artist_name": artist_name
     }
-
     users_coll = nardwuar_db['users']
     users_coll.update({"_id" : kwargs['user_id']}, { '$push': {"FollowedArtists":artist_dict}})
+    return jsonify({"status": "success", "new followed artist" : artist_name})
 
-    jsonify({"status": "success", "new followed artist" : artist_name})
 
 @app.route("/unfollow", methods = ["POST"])
 @auth_required
@@ -65,8 +64,7 @@ def unfollow(**kwargs):
     artist_name = request.get_json()["artist_name"]
     users_coll = nardwuar_db['users']
     users_coll.update({"_id" : kwargs['user_id']}, { '$pull' :{"FollowedArtists":{"artist_id": artist_id}}})
-
-    jsonify({"status": "success", "artist unfollowed" : artist_name})
+    return jsonify({"status": "success", "artist unfollowed" : artist_name})
 
 #route for creating new user and getting existing user info
 @app.route("/users", methods = ["POST", "GET"])
