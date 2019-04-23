@@ -6,18 +6,14 @@ from pymongo import MongoClient, errors
 from werkzeug.wrappers import Request, Response
 from functools import wraps
 from collections import OrderedDict
-
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import pitchfork
 
 SPOTIPY_CLIENT_ID = 'e46b04d01bd14ddc881de79291aa9c18'
 SPOTIPY_CLIENT_SECRET = 'b8bd7750a5b64a64a8cf4b53c6b4076a'
-
 client_credentials_manager = SpotifyClientCredentials(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET)
 spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-
-
 client = MongoClient('mongodb+srv://admin:greenpizza@cluster0-fhxen.mongodb.net/test?retryWrites=true')
 cred = credentials.Certificate('nardwuar-7e6fc-firebase-adminsdk-lzorg-8d67ef20d9.json')
 default_app = firebase_admin.initialize_app(cred)
@@ -42,7 +38,6 @@ def auth_required(f):
             return jsonify({"error": "Bad token or token was revoked"})
     return verify_token
 
-
 @app.route("/follow", methods = ["POST"])
 @auth_required
 def follow(**kwargs):
@@ -56,7 +51,6 @@ def follow(**kwargs):
     users_coll.update({"_id" : kwargs['user_id']}, { '$push': {"FollowedArtists":artist_dict}})
     return jsonify({"status": "success", "new followed artist" : artist_name})
 
-
 @app.route("/unfollow", methods = ["POST"])
 @auth_required
 def unfollow(**kwargs):
@@ -64,7 +58,6 @@ def unfollow(**kwargs):
     artist_name = request.get_json()["artist_name"]
     users_coll = nardwuar_db['users']
     users_coll.update({"_id" : kwargs['user_id']}, { '$pull' :{"FollowedArtists":{"artist_id": artist_id}}})
-
     return jsonify({"status": "success", "artist unfollowed" : artist_name})
 
 #route for creating new user and getting existing user info
@@ -112,14 +105,11 @@ def searchResults():
     query = request.args.get('query')
     search_results = spotify.search(query,5,0,"artist")
     search_results = search_results['artists']['items']
-
     five_results= []
     for artist in search_results:
         five_results.append({"Name" : artist['name'], "id" : artist['id']})
-
     return jsonify(five_results)
 
-#route for getting artist info given query (id of artist)
 @app.route("/artist-info/<artist_id>", methods = ["GET"])
 def searchArtistInfo(artist_id):
     artist = spotify.artist(artist_id)
@@ -128,7 +118,6 @@ def searchArtistInfo(artist_id):
     list_of_albums_names = []
     for item in list_of_albums:
         list_of_albums_names.append(item['name'])
-
 
     seen = set()
     seen_add=seen.add
@@ -144,7 +133,6 @@ def searchArtistInfo(artist_id):
         },
         "Pitchfork": albumList
     }
-
     for x in range(0,3):
         try:
             artist_name = artist['name']
