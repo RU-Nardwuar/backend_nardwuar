@@ -64,6 +64,7 @@ def unfollow(**kwargs):
     artist_name = request.get_json()["artist_name"]
     users_coll = nardwuar_db['users']
     users_coll.update({"_id" : kwargs['user_id']}, { '$pull' :{"FollowedArtists":{"artist_id": artist_id}}})
+
     return jsonify({"status": "success", "artist unfollowed" : artist_name})
 
 #route for creating new user and getting existing user info
@@ -148,7 +149,7 @@ def searchArtistInfo(artist_id):
     for x in range(0,3):
         try:
             album_name = list_of_albums[x]['name']
-            p=pitchfork.search(artist['name'], album_name)
+            p=pitchfork.search(artist['name'][:5], album_name)
             description = p.abstract()
             description = description[:-2]
             album_info = {
