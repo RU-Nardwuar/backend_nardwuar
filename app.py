@@ -137,7 +137,7 @@ def searchArtistInfo(artist_id):
         "Spotify":{
             "Artist Name": artist['name'],
             "Artist Photo 600x600": artist['images'][0]['url'],
-            "Albums": list_of_albums_names_no_duplicates,
+            "Albums/Singles": list_of_albums_names_no_duplicates,
             "Genres": artist['genres'],
             "Total Number of Spotify Followers": artist['followers']['total']
         },
