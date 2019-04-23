@@ -147,7 +147,9 @@ def searchArtistInfo(artist_id):
     for x in range(0,3):
         try:
             album_name = list_of_albums[x]['name']
-            p=pitchfork.search(artist['name'][:5], album_name)
+            artist_name = artist['name']
+            artist_name = artist[:5]
+            p=pitchfork.search(artist_name, album_name)
             description = p.abstract()
             description = description[:-2]
             album_info = {
