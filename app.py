@@ -105,10 +105,12 @@ def searchResults():
     query = request.args.get('query')
     search_results = spotify.search(query,5,0,"artist")
     search_results = search_results['artists']['items']
+    results_dict = {}
     five_results= []
     for artist in search_results:
         five_results.append({"Name" : artist['name'], "id" : artist['id']})
-    return jsonify(five_results)
+    results_dict.update({"artistQueryList": five_results})
+    return jsonify(results_dict)
 
 @app.route("/artist-info/<artist_id>", methods = ["GET"])
 def searchArtistInfo(artist_id):
@@ -138,7 +140,7 @@ def searchArtistInfo(artist_id):
             artist_name = artist['name']
             album_name = list_of_albums[x]['name']
             #album_name_approx = album_name[:5]
-            p=pitchfork.search(artist_name, album_name)
+            p=pitchfork.search(artist_name, album_name.lower())
             description = p.abstract()
             description = description[:-2]
             album_info = {
