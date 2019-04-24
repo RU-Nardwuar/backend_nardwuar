@@ -66,7 +66,7 @@ def unfollow(**kwargs):
 def users(**kwargs):
     if request.method == "GET":
         users_coll = nardwuar_db['users']
-        return jsonify(users_coll.find({ '_id': kwargs['user_id']}))
+        return jsonify(users_coll.findOne({ '_id': kwargs['user_id']}))
     else:
         #need id_token from frontend
         id_token = request.get_json()["id_token"]
